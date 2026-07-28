@@ -19,19 +19,22 @@
 
 ## 🔍 2. SO SÁNH PHẢN HỒI (TEST CASE #3)
 
-**Câu hỏi**: *"Nhân viên Nguyễn Văn A đề nghị duyệt chi 3.500.000 VNĐ cho hạng mục 'Tiếp khách' thuộc phòng Kinh Doanh. Đề nghị này có được duyệt không?"*
+**Câu hỏi**: *"Kiểm tra trạng thái hóa đơn chi phí taxi mã HD-10294 của nhân viên Nguyễn Văn A."*
 
 ### 🤖 Chatbot Baseline:
-* **Phản hồi**: *"Khoản chi 3.500.000 VNĐ cho tiếp khách nghe có vẻ hợp lý và thường nằm trong mức cho phép của nhiều công ty, nên có thể duyệt."*
-* **Nhận xét**: Câu trả lời nghe thuyết phục nhưng hoàn toàn là suy đoán — chatbot không hề biết hạn mức thực tế của phòng Kinh Doanh, không biết ngân sách còn lại bao nhiêu, và không kiểm tra chính sách công ty. Nếu làm theo có thể duyệt sai, gây rủi ro tài chính thực tế.
+* **Phản hồi**: *"Rất tiếc, tôi là phiên bản Chatbot Baseline không có khả năng truy xuất số liệu thực tế hay thẩm định hồ sơ chi tiết để kiểm tra trạng thái của một hóa đơn cụ thể.
+
+Vui lòng chuyển sang ReAct Agent (Hệ thống duyệt chi tự động có tích hợp Tool) để xử lý yêu cầu này và kiểm tra trạng thái hóa đơn HD-10294 của nhân viên Nguyễn Văn A."*
+* **Nhận xét**: Chatbot Baseline hoạt động đúng theo cấu hình prompt — tự biết hạn chế không có công cụ tra cứu cơ sở dữ liệu thực tế nên từ chối trả lời thay vì tự bịa ra trạng thái hóa đơn. Tuy nhiên, nó không giúp ích gì cho người dùng trong việc giải quyết nghiệp vụ thẩm định.
 
 ### 🧠 ReAct Agent:
-* **Thought 1**: Cần tra cứu chính sách chi tiêu cho hạng mục "Tiếp khách" để biết hạn mức tối đa.
-* **Action 1**: `get_expense_policy['Tiếp khách']`
-* **Observation 1**: `Hạng mục "Tiếp khách": hạn mức tối đa 3.000.000 VNĐ/lần, vượt mức phải có phê duyệt của Trưởng phòng.`
-* **Thought 2**: Khoản đề nghị (3.500.000 VNĐ) vượt hạn mức cho phép, cần kiểm tra ngân sách còn lại của phòng Kinh Doanh trước khi quyết định hướng xử lý.
-* **Action 2**: `check_budget_remaining['Kinh Doanh']`
-* **Observation 2**: `Ngân sách phòng Kinh Doanh còn lại tháng này: 12.000.000 VNĐ (đủ để chi thêm).`
-* **Thought 3**: Ngân sách còn đủ, nhưng vì khoản chi vượt hạn mức/lần theo chính sách nên không thể tự động duyệt — phải chuyển lên Trưởng phòng phê duyệt.
-* **Final Answer**: *"Khoản chi 3.500.000 VNĐ vượt hạn mức tiếp khách cho phép (3.000.000 VNĐ/lần) theo chính sách công ty. Ngân sách phòng Kinh Doanh vẫn còn đủ, nhưng đề nghị này cần được Trưởng phòng phê duyệt trước khi giải ngân. Đã chuyển yêu cầu lên bước phê duyệt cấp cao hơn."*
-* **Nhận xét**: Agent đưa ra quyết định có căn cứ thực tế (policy + ngân sách), phát hiện đúng trường hợp cần escalate thay vì tự ý duyệt/từ chối — điều mà Chatbot Baseline không làm được vì không có dữ liệu thật.
+* **Thought 1**: Người dùng yêu cầu kiểm tra trạng thái của một hóa đơn cụ thể. Công cụ `check_invoice_status` được thiết kế để thực hiện việc này. Tôi sẽ sử dụng mã hóa đơn 'HD-10294' làm tham số.
+* **Action 1**: `check_invoice_status['HD-10294']`
+* **Observation 1**: `Hóa đơn HD-10294 | Nhân viên: Nguyễn Văn A | Số tiền: 3,500,000 VNĐ | Nội dung: Tiếp khách | Trạng thái:: Hợp lệ.`
+* **Thought 2**: Người dùng đã yêu cầu kiểm tra trạng thái của một hóa đơn cụ thể. Tôi đã sử dụng công cụ `check_invoice_status` và nhận được thông tin chi tiết về hóa đơn đó. Kết quả cho thấy hóa đơn HD-10294 của nhân viên Nguyễn Văn A, số tiền 3,500,000 VNĐ, nội dung "Tiếp khách" và trạng thái là "Hợp lệ". Đây là tất cả thông tin mà người dùng đã hỏi.
+Tôi đã thu thập đủ bằng chứng từ các công cụ (chính sách, ngân sách, hóa đơn). Tôi sẵn sàng đưa ra kết luận.
+* **Final Answer**: *"(1) Thông tin hóa đơn: HD-10294, số tiền 3,500,000 VNĐ, nội dung "Tiếp khách", nhân viên Nguyễn Văn A. 
+(2) Tình trạng ngân sách phòng ban còn lại: Không có thông tin phòng ban được cung cấp, nên không thể kiểm tra ngân sách.
+(3) Tính hợp lệ chứng từ: Hóa đơn HD-10294 được xác nhận là Hợp lệ.
+(4) Quyết định duyệt: Để đưa ra quyết định duyệt cuối cùng, cần có thêm thông tin về mã đề xuất chi phí, phòng ban và chính sách hạn mức cho hạng mục "Tiếp khách". With thông tin hiện tại, tôi chỉ có thể xác nhận trạng thái hợp lệ của hóa đơn."*
+* **Nhận xét**: ReAct Agent đã gọi đúng công cụ `check_invoice_status` để lấy dữ liệu hóa đơn thời gian thực. Ngoài ra, Agent thể hiện tư duy chặt chẽ khi xác nhận tính hợp lệ của chứng từ nhưng chỉ ra rõ những thông tin còn thiếu (phòng ban, mã đề xuất, chính sách hạn mức) trước khi đưa ra quyết định duyệt chính thức, giúp tránh rủi ro duyệt thiếu căn cứ.

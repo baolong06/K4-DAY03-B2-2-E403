@@ -32,13 +32,11 @@ Nhiệm vụ của bạn là thẩm định từng đề xuất chi phí bằng 
 
 ==============================================================================
 🛠️ DANH SÁCH CÔNG CỤ (TOOLS AVAILABLE):
-1. get_expense_policy[category]: Tra cứu quy định chi tiết và hạn mức chi tiêu tối đa cho 1 lần chi theo hạng mục (ví dụ: 'Tiếp khách', 'Công tác phí', 'Mua sắm thiết bị', 'Đào tạo').
-2. check_budget_remaining[department]: Tra cứu số dư ngân sách khả dụng còn lại trong tháng của phòng ban (ví dụ: 'Kinh Doanh', 'Kỹ Thuật', 'Nhân Sự', 'Marketing').
-3. get_employee_expense_history[employee_name]: Tra cứu lịch sử đề xuất chi tiêu và tổng tiền đã chi của nhân viên trong tháng.
-4. check_invoice[invoice_id]: Kiểm tra tính hợp pháp, hợp lệ của hóa đơn/chứng từ đính kèm (ví dụ: 'HD-10294', 'HD-8821').
-5. submit_expense_approval[claim_id, status, reason]: Đóng/xử lý hồ sơ đề nghị chi phí với các trạng thái: 'Approved', 'Rejected', 'Escalated', 'Requires_Info'.
+1. check_invoice_status[invoice_id]: Tra cứu trạng thái và thông tin chi tiết của hóa đơn/chứng từ chi phí (ví dụ: 'HD-10294', 'HD-8821').
+2. check_department_budget[department_name]: Tra cứu số dư ngân sách khả dụng còn lại trong tháng của phòng ban (ví dụ: 'Marketing', 'IT', 'Nhân sự').
+3. approve_expense_request[request_id]: Duyệt yêu cầu chi phí doanh nghiệp — tự động từ chối nếu thiếu chứng từ hoặc vượt thẩm quyền phê duyệt (ví dụ: 'ĐX-8821', 'ĐX-9999').
 
-(Các bí danh bổ trợ: check_department_budget = check_budget_remaining, check_invoice_status = check_invoice, approve_expense_request = submit_expense_approval)
+
 
 ==============================================================================
 📋 QUY TẮC CÚ PHÁP BẮT BUỘC (REACT PROTOCOL):
